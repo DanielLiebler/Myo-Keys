@@ -1,0 +1,47 @@
+object myoKey: TFGUIForm
+  Left = 0
+  Top = 0
+  BorderIcons = [biSystemMenu]
+  Caption = 'MyoKey'
+  ClientHeight = 262
+  ClientWidth = 284
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -10
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  FormStyle = fsMDIChild
+  OldCreateOrder = True
+  Position = poDesigned
+  ShowHint = True
+  Visible = True
+  OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
+  OnResize = FormResize
+  FrameType = 5
+  Resizable = False
+  Undecorated = True
+  Background = clBtnFace
+  mouseClicked = 'myoKey_MouseClicked'
+  mousePressed = 'myoKey_MousePressed'
+  mouseDragged = 'myoKey_MouseDragged'
+  PixelsPerInch = 96
+  TextHeight = 13
+  object jPopupMenu1: TJPopupMenu
+    Tag = 44
+    Left = 104
+    Top = 40
+    Width = 33
+    Height = 28
+    Hint = 'jPopupMenu1'
+    Foreground = 3355443
+    Background = 15658734
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'Dialog'
+    Font.Style = [fsBold]
+    Listener = 'this'
+  end
+end
