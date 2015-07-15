@@ -64,9 +64,22 @@ public class MyoKey extends JFrame {
       }
     });
     
-    JMenuItem menuItem = new JMenuItem(new ImageIcon("textures/group.png"));
-    menuItem.setMnemonic(KeyEvent.VK_D);   
-    optionMenu.add(menuItem);
+    optionMenu.setBackground(new Color(0.5f,0.5f,0.5f,1f));
+    //optionMenu.setBorderPainted(false);
+    
+    JMenuItem menuItem1 = new JMenuItem(new ImageIcon("textures/group.png"));
+    menuItem1.setBackground(new Color(1.0f,1.0f,1.0f,0f)); 
+    menuItem1.setOpaque(false);
+    optionMenu.add(menuItem1);
+    JMenuItem menuItem2 = new JMenuItem(new ImageIcon("textures/group.png"));
+    menuItem2.setBackground(new Color(1.0f,1.0f,1.0f,0f)); 
+    menuItem2.setOpaque(false); 
+    optionMenu.add(menuItem2);
+    JMenuItem menuItem3 = new JMenuItem(new ImageIcon("textures/group.png"));
+    menuItem3.setBackground(new Color(1.0f,1.0f,1.0f,0f));  
+    menuItem3.setOpaque(false);
+    optionMenu.add(menuItem3);
+    
     // Ende Komponenten
     
     setVisible(true);
