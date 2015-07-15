@@ -54,14 +54,10 @@ public class MyoKey extends JFrame {
       }                                       
       public void mousePressed(MouseEvent evt) { 
         myoKey_MouseClicked(evt);
-      }     public void mouseReleased(MouseEvent evt) {
+      }
+      public void mouseReleased(MouseEvent evt) {
         if (evt.isPopupTrigger()) 
         optionMenu.show(evt.getComponent(), evt.getX(), evt.getY()); 
-      }
-    });
-    addMouseMotionListener(new MouseMotionAdapter() { 
-      public void mouseDragged(MouseEvent evt) { 
-        myoKey_MouseDragged(evt);
       }
     });
     
@@ -90,10 +86,6 @@ public class MyoKey extends JFrame {
   public void myoKey_MouseClicked(MouseEvent evt) {
     // TODO hier Quelltext einfügen
   } // end of myoKey_MouseClicked
-  
-  public void myoKey_MouseDragged(MouseEvent evt) {
-    // TODO hier Quelltext einfügen
-  } // end of myoKey_MouseDragged
   
   // Ende Methoden
 } // end of class MyoKey
