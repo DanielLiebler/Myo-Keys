@@ -15,6 +15,7 @@ import java.awt.image.*;
 
 public class MyoKey extends JFrame {
   // Anfang Attribute
+  private static JFrame mainFrame;
   private JPopupMenu optionMenu = new JPopupMenu();
   // Ende Attribute
   
@@ -68,6 +69,11 @@ public class MyoKey extends JFrame {
     JMenuItem menuItemExit = new JMenuItem("   EXIT Myo Keys", new ImageIcon("textures/exit.png"));
     menuItemExit.setBackground(new Color(1.0f,1.0f,1.0f,0f));  
     menuItemExit.setOpaque(false);
+    menuItemExit.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e){
+        mainFrame.dispose();
+      }
+    });
     optionMenu.add(menuItemExit);
     
     // Ende Komponenten
@@ -78,7 +84,7 @@ public class MyoKey extends JFrame {
   // Anfang Methoden
   
   public static void main(String[] args) {
-    new MyoKey("MyoKey");
+    mainFrame = new MyoKey("MyoKey");
   } // end of main
   
   public void myoKey_MouseClicked(MouseEvent evt) {
