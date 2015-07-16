@@ -3,7 +3,9 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*; 
 import javax.imageio.ImageIO;
-import java.awt.image.*;
+import java.awt.image.*;      
+import com.thalmic.myo.*;
+import com.thalmic.myo.enums.*;
 
 /**
   *
@@ -11,7 +13,7 @@ import java.awt.image.*;
   *
   * @version 1.0 vom 15.07.2015
   * @author                                                                                                                                                
-  */
+  */         
 
 public class MyoKey extends JFrame {
   private static float shrink = 1f;
@@ -21,6 +23,14 @@ public class MyoKey extends JFrame {
   // Anfang Attribute
   private static JFrame mainFrame;
   private JPopupMenu optionMenu = new JPopupMenu();
+  
+  
+  //start MYO Attributes
+  //Using Nicolas A Stuarts Java Library
+  
+  
+  private static Hub hub;
+  
   // Ende Attribute
   
   public MyoKey(String title) { 
@@ -105,6 +115,34 @@ public class MyoKey extends JFrame {
   
   public static void main(String[] args) {
     mainFrame = new MyoKey("MyoKey");
+    
+    
+    //MYO Functionality
+    
+    try {
+      hub = new Hub("com.example.hello-myo");
+      
+      System.out.println("Attempting to find a Myo...");
+      Myo myo = hub.waitForMyo(10000);
+      myo.unlock(UnlockType.UNLOCK_HOLD);
+      
+      
+      if (myo == null) {
+        throw new RuntimeException("Unable to find a Myo!");
+      }
+      
+      System.out.println("Connected to a Myo armband!");
+      CombinedListener comListener = new CombinedListener();
+      hub.addListener(comListener);
+      
+      hub.run(1000 / 20);
+      
+    } catch (Exception e) {
+      System.err.println("Error: ");
+      e.printStackTrace();
+      System.exit(1);
+    }
+    
     
   } // end of main
   
