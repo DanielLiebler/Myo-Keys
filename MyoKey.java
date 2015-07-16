@@ -39,20 +39,25 @@ public class MyoKey extends JFrame {
     cp.setLayout(null);
     
     //Read Images
-    try{
-      for (int i=1; i<=6; i++) {
-        groups[i][0] = ImageIO.read(getClass().getResource("textures/Group0" + i + ".png"));
-        for (int j=1; j<=5; j++) {
-          groups[i][j] = ImageIO.read(getClass().getResource("textures/Group" + Integer.toString(i) + Integer.toString(j) + ".png"));
-        } // end of for    
-      }
-      groups[7][0] = ImageIO.read(getClass().getResource("textures/Group65.png"));
+    for (int i=1; i<=6; i++) {  
+      try{
+        groups[i-1][0] = ImageIO.read(getClass().getResource("textures/Group0" + i + ".png")); 
+      }catch(Exception e){e.printStackTrace();}
       for (int j=1; j<=5; j++) {
-        groups[7][j] = ImageIO.read(getClass().getResource("textures/Group7"+ Integer.toString(j) + ".png"));
-      } // end of for
-    }catch(Exception e){
-      e.printStackTrace();
+        try{
+          groups[i-1][j] = ImageIO.read(getClass().getResource("textures/Group" + Integer.toString(i) + Integer.toString(j) + ".png"));
+        }catch(Exception e){e.printStackTrace();}
+      } // end of for    
     }
+    try{
+      groups[6][0] = ImageIO.read(getClass().getResource("textures/Group65.png"));
+    }catch(Exception e){e.printStackTrace();}
+    for (int j=1; j<=5; j++) {
+      try{
+        groups[6][j] = ImageIO.read(getClass().getResource("textures/Group7"+ Integer.toString(j) + ".png"));
+      }catch(Exception e){e.printStackTrace();}
+    } // end of for
+    
     // Anfang Komponenten
     
     setUndecorated(true); 
@@ -101,13 +106,20 @@ public class MyoKey extends JFrame {
   public static void main(String[] args) {
     mainFrame = new MyoKey("MyoKey");
     
-    
   } // end of main
   
-  private void repaintUI(){
-    for (int i=1; i<=6; i++) {
-      
-    } // end of for
+  @Override
+  public void paint(Graphics g){
+    super.paint(g);
+    if(selectedGroup == 0){
+      for (int i = 0; i<=5; i++) {
+        g.drawImage(groups[i][0], ballpos[i][0], ballpos[i][1], new Color(1f,1f,1f,0f), null);
+      } // end of for 
+    }else{
+      for (int i = 0; i<=5; i++) {
+        g.drawImage(groups[selectedGroup][i], ballpos[i][0], ballpos[i][1], new Color(1f,1f,1f,0f), null);
+      } // end of for 
+    }
   }
   
   public void myoKey_MouseClicked(MouseEvent evt) {
