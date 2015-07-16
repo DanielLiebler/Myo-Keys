@@ -19,7 +19,8 @@ public class MyoKey extends JFrame {
   private static float shrink = 1f;
   private static final int[][] ballpos = {{75,337}, {20,207}, {75,75}, {206,20}, {337,75}, {392,206}, {337,337}, {206,392}};
   private static int selectedGroup = 0;//0 == none
-  private BufferedImage[][] groups = new BufferedImage[7][6];        //Group[x][0] is the complete Group Icon. Group 6 is additional Character Group. So Groups[6][0] is null
+  private BufferedImage[][] groups = new BufferedImage[7][6];        //Group[x][0] is the complete Group Icon. Group 6 is additional Character Group. So Groups[6][0] is null   
+  private BufferedImage[] selectors = new BufferedImage[8];
   // Anfang Attribute
   public static MyoKey mainFrame;
   private JPopupMenu optionMenu = new JPopupMenu();
@@ -37,7 +38,9 @@ public class MyoKey extends JFrame {
   //Calculating Arm Pos stuff
   
   private static double[] lastPos = {0, 0};
-  
+  private static final double correctionGrade = 0;
+  private static double[] midPos = {0,0};//Will be improved when height >1.3 {position, Value(how much greater the height value is than 1.3)}
+  private static int selected = -1;
   // Ende Attribute
   
   public MyoKey(String title) { 
@@ -75,6 +78,12 @@ public class MyoKey extends JFrame {
       }catch(Exception e){e.printStackTrace();}
     } // end of for
     
+    
+    for (int i=0; i<=7; i++) {  
+      try{
+        selectors[i] = ImageIO.read(getClass().getResource("textures/selector" + i + ".png")); 
+      }catch(Exception e){e.printStackTrace();}
+    }
     // Anfang Komponenten
     
     setUndecorated(true); 
@@ -144,7 +153,6 @@ public class MyoKey extends JFrame {
       
       while (true) {      
         hub.run(1000 / 20);
-        
       } // end of while
       
     } catch (Exception e) {
@@ -168,6 +176,10 @@ public class MyoKey extends JFrame {
         g.drawImage(groups[selectedGroup][i], ballpos[i][0], ballpos[i][1], new Color(1f,1f,1f,0f), null);
       } // end of for 
     }
+    
+    if(selected >= 0){
+      g.drawImage(selectors[selected], 184, 184, new Color(1f,1f,1f,0f), null);  
+    }
   }
   
   public void myoKey_MouseClicked(MouseEvent evt) {
@@ -175,8 +187,8 @@ public class MyoKey extends JFrame {
   } // end of myoKey_MouseClicked
   
   public void calculatePos(double rot, double pan, double height){
-    System.out.println(comListener.xDir.toString());              
-    System.out.println(comListener.curArm.toString());
+    //System.out.println(comListener.xDir.toString());              
+    //System.out.println(comListener.curArm.toString());
     
     if(comListener.xDir == XDirection.X_DIRECTION_TOWARDS_WRIST) height = -height;
     System.out.println(Double.toString(rot).substring(0,4) + "/" + Double.toString(pan).substring(0,4) + "/" + Double.toString(height).substring(0,4));
@@ -185,50 +197,59 @@ public class MyoKey extends JFrame {
     //0.7 per field
     //0-0.35, 0.36-1.05, 1.06 - 1.4
     
-    double delta[] = {pan-lastPos[0], height-lastPos[1]};
-    boolean side;//true == right, false == left
-    if(delta[1] != 0 && delta[0] != 0){
-      if(delta[1] < 0){
-        side = delta[0]<0;
+    double dPan = pan - lastPos[0];
+    if (dPan < 0) dPan = -dPan;
+    if((height > midPos[1]+1.3-correctionGrade*dPan) || (-height > midPos[1]+1.3-correctionGrade*dPan)){
+      //improve midPos
+      System.out.print("improving: " + midPos[1] + " to ");
+      if(height<0){
+        midPos[1] = (-height)-1.3;      
+        System.out.println(midPos[1]);
       }else{
-        side = delta[0]>0;
-      }  
-      
-      if(!side){
-        if(height< -0.35){
-          //Field 0
-          System.out.println("Field 0");
-          
-        }else if(height<= 0.35 && height> -0.35){
-          //Field 1
-          System.out.println("Field 1");
-          
-        }else if(height<= 1.05 && height> 0.35){
-          //Field 2
-          System.out.println("Field 2");
-          
-        }else if(height> 1.05){
-          //Field 3
-          System.out.println("Field 3");
-          
-        }
-      }else{
-        if(height> 1.05){  
-          //Field 3 
-          System.out.println("Field 3");
-          
-        }else if(height<= 1.05 && height> 0.35){
-          //Field 4     
-          System.out.println("Field 4");
-          
-        }else if(height<= 0.35){  
-          //Field 5
-          System.out.println("Field 5");
-          
-        }
+        midPos[1] = height-1.3;
+        System.out.println(midPos[1]);
       }
+      midPos[0] = pan;
     }
     
+    boolean side = pan < midPos[0];//true == right, false == left
+    
+    
+    if(!side){
+      if(height< -0.25){
+        //Field 0
+        System.out.println("Field 0");
+        selected = 0;
+      }else if(height<= 0.25 && height> -0.35){
+        //Field 1
+        System.out.println("Field 1");
+        selected = 1;
+      }else if(height<= 1.05 && height> 0.35){
+        //Field 2
+        System.out.println("Field 2");
+        selected = 2;
+      }else if(height> 1.05){
+        //Field 3
+        System.out.println("Field 3");
+        selected = 3;
+      }
+    }else{
+      if(height> 1.05){  
+        //Field 3 
+        System.out.println("Field 3");
+        selected = 3;
+      }else if(height<= 1.05 && height> 0.6){
+        //Field 4     
+        System.out.println("Field 4");
+        selected = 4;
+      }else if(height<= 0.6){  
+        //Field 5
+        System.out.println("Field 5 selected");
+        selected = 5;
+      }
+    }             
+    mainFrame.repaint();
+    //System.out.println("Midpos: " + midPos[0] + "/" + midPos[1]);
     lastPos[0] = pan;
     lastPos[1] = height;
   }
