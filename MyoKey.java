@@ -10,10 +10,14 @@ import java.awt.image.*;
   * Beschreibung
   *
   * @version 1.0 vom 15.07.2015
-  * @author 
+  * @author                                                                                                                                                
   */
 
 public class MyoKey extends JFrame {
+  private static float shrink = 1f;
+  private static final int[][] ballpos = {{75,337}, {20,207}, {75,75}, {206,20}, {337,75}, {392,206}, {337,337}, {206,392}};
+  private static int selectedGroup = 0;//0 == none
+  private BufferedImage[][] groups = new BufferedImage[7][6];        //Group[x][0] is the complete Group Icon. Group 6 is additional Character Group. So Groups[6][0] is null
   // Anfang Attribute
   private static JFrame mainFrame;
   private JPopupMenu optionMenu = new JPopupMenu();
@@ -34,6 +38,21 @@ public class MyoKey extends JFrame {
     Container cp = getContentPane();
     cp.setLayout(null);
     
+    //Read Images
+    try{
+      for (int i=1; i<=6; i++) {
+        groups[i][0] = ImageIO.read(getClass().getResource("textures/Group0" + i + ".png"));
+        for (int j=1; j<=5; j++) {
+          groups[i][j] = ImageIO.read(getClass().getResource("textures/Group" + Integer.toString(i) + Integer.toString(j) + ".png"));
+        } // end of for    
+      }
+      groups[7][0] = ImageIO.read(getClass().getResource("textures/Group65.png"));
+      for (int j=1; j<=5; j++) {
+        groups[7][j] = ImageIO.read(getClass().getResource("textures/Group7"+ Integer.toString(j) + ".png"));
+      } // end of for
+    }catch(Exception e){
+      e.printStackTrace();
+    }
     // Anfang Komponenten
     
     setUndecorated(true); 
@@ -81,7 +100,15 @@ public class MyoKey extends JFrame {
   
   public static void main(String[] args) {
     mainFrame = new MyoKey("MyoKey");
+    
+    
   } // end of main
+  
+  private void repaintUI(){
+    for (int i=1; i<=6; i++) {
+      
+    } // end of for
+  }
   
   public void myoKey_MouseClicked(MouseEvent evt) {
     // TODO hier Quelltext einfügen
