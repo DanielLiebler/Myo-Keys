@@ -21,7 +21,7 @@ public class MyoKey extends JFrame {
   private static int selectedGroup = 0;//0 == none
   private BufferedImage[][] groups = new BufferedImage[7][6];        //Group[x][0] is the complete Group Icon. Group 6 is additional Character Group. So Groups[6][0] is null
   // Anfang Attribute
-  private static JFrame mainFrame;
+  public static MyoKey mainFrame;
   private JPopupMenu optionMenu = new JPopupMenu();
   
   
@@ -30,6 +30,13 @@ public class MyoKey extends JFrame {
   
   
   private static Hub hub;
+  private static Myo myo;
+  private static CombinedListener comListener;
+  
+  
+  //Calculating Arm Pos stuff
+  
+  private static double[] lastPos = {0, 0};
   
   // Ende Attribute
   
@@ -123,7 +130,7 @@ public class MyoKey extends JFrame {
       hub = new Hub("com.example.hello-myo");
       
       System.out.println("Attempting to find a Myo...");
-      Myo myo = hub.waitForMyo(10000);
+      myo = hub.waitForMyo(10000);
       myo.unlock(UnlockType.UNLOCK_HOLD);
       
       
@@ -132,10 +139,13 @@ public class MyoKey extends JFrame {
       }
       
       System.out.println("Connected to a Myo armband!");
-      CombinedListener comListener = new CombinedListener();
+      comListener = new CombinedListener();
       hub.addListener(comListener);
       
-      hub.run(1000 / 20);
+      while (true) {      
+        hub.run(1000 / 20);
+        
+      } // end of while
       
     } catch (Exception e) {
       System.err.println("Error: ");
@@ -163,6 +173,65 @@ public class MyoKey extends JFrame {
   public void myoKey_MouseClicked(MouseEvent evt) {
     // TODO hier Quelltext einfügen
   } // end of myoKey_MouseClicked
+  
+  public void calculatePos(double rot, double pan, double height){
+    System.out.println(comListener.xDir.toString());              
+    System.out.println(comListener.curArm.toString());
+    
+    if(comListener.xDir == XDirection.X_DIRECTION_TOWARDS_WRIST) height = -height;
+    System.out.println(Double.toString(rot).substring(0,4) + "/" + Double.toString(pan).substring(0,4) + "/" + Double.toString(height).substring(0,4));
+    
+    //height -1.4 - 1.4
+    //0.7 per field
+    //0-0.35, 0.36-1.05, 1.06 - 1.4
+    
+    double delta[] = {pan-lastPos[0], height-lastPos[1]};
+    boolean side;//true == right, false == left
+    if(delta[1] != 0 && delta[0] != 0){
+      if(delta[1] < 0){
+        side = delta[0]<0;
+      }else{
+        side = delta[0]>0;
+      }  
+      
+      if(!side){
+        if(height< -0.35){
+          //Field 0
+          System.out.println("Field 0");
+          
+        }else if(height<= 0.35 && height> -0.35){
+          //Field 1
+          System.out.println("Field 1");
+          
+        }else if(height<= 1.05 && height> 0.35){
+          //Field 2
+          System.out.println("Field 2");
+          
+        }else if(height> 1.05){
+          //Field 3
+          System.out.println("Field 3");
+          
+        }
+      }else{
+        if(height> 1.05){  
+          //Field 3 
+          System.out.println("Field 3");
+          
+        }else if(height<= 1.05 && height> 0.35){
+          //Field 4     
+          System.out.println("Field 4");
+          
+        }else if(height<= 0.35){  
+          //Field 5
+          System.out.println("Field 5");
+          
+        }
+      }
+    }
+    
+    lastPos[0] = pan;
+    lastPos[1] = height;
+  }
   
   // Ende Methoden
 } // end of class MyoKey
