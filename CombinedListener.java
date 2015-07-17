@@ -45,6 +45,9 @@ public class CombinedListener extends AbstractDeviceListener{
   @Override
   public void onPose(Myo myo, long timestamp, Pose pose) {
     System.out.println("Pose" + pose.toString());
+    if(PoseType.FIST == pose.getType()){
+      MyoKey.selectedGroup = MyoKey.selected;
+    }
   }
   
   @Override

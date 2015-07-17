@@ -6,7 +6,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.*;      
 import com.thalmic.myo.*;
 import com.thalmic.myo.enums.*;
-
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
 /**
   *
   * Beschreibung
@@ -18,9 +19,10 @@ import com.thalmic.myo.enums.*;
 public class MyoKey extends JFrame {
   private static float shrink = 1f;
   private static final int[][] ballpos = {{75,337}, {20,207}, {75,75}, {206,20}, {337,75}, {392,206}, {337,337}, {206,392}};
-  private static int selectedGroup = 0;//0 == none
-  private BufferedImage[][] groups = new BufferedImage[7][6];        //Group[x][0] is the complete Group Icon. Group 6 is additional Character Group. So Groups[6][0] is null   
+  public static int selectedGroup = -1;//-1 == none
+  private BufferedImage[] groups = new BufferedImage[8];        //Groups[7] is empty Group Icon  
   private BufferedImage[] selectors = new BufferedImage[8];
+  private String[][] letters = {{"A", "B", "C", "D", "E"}, {"F", "G", "H", "I", "J"}, {"K", "L", "M", "N", "O"}, {"P", "Q", "R", "S", "T"}, {"U", "V", "W", "X", "Y"}, {"Z", ".", ",", "return", "nextGroup"}, {"(", ")", "-", "\"", ":"}};
   // Anfang Attribute
   public static MyoKey mainFrame;
   private JPopupMenu optionMenu = new JPopupMenu();
@@ -40,7 +42,7 @@ public class MyoKey extends JFrame {
   private static double[] lastPos = {0, 0};
   private static final double correctionGrade = 0;
   private static double[] midPos = {0,0};//Will be improved when height >1.3 {position, Value(how much greater the height value is than 1.3)}
-  private static int selected = -1;
+  public static int selected = -1;
   // Ende Attribute
   
   public MyoKey(String title) { 
@@ -59,24 +61,14 @@ public class MyoKey extends JFrame {
     cp.setLayout(null);
     
     //Read Images
-    for (int i=1; i<=6; i++) {  
+    for (int i=0; i<=6; i++) {  
       try{
-        groups[i-1][0] = ImageIO.read(getClass().getResource("textures/Group0" + i + ".png")); 
+        groups[i] = ImageIO.read(getClass().getResource("textures/Group" + i + ".png")); 
       }catch(Exception e){e.printStackTrace();}
-      for (int j=1; j<=5; j++) {
-        try{
-          groups[i-1][j] = ImageIO.read(getClass().getResource("textures/Group" + Integer.toString(i) + Integer.toString(j) + ".png"));
-        }catch(Exception e){e.printStackTrace();}
-      } // end of for    
     }
     try{
-      groups[6][0] = ImageIO.read(getClass().getResource("textures/Group65.png"));
+      groups[7] = ImageIO.read(getClass().getResource("textures/Group.png")); 
     }catch(Exception e){e.printStackTrace();}
-    for (int j=1; j<=5; j++) {
-      try{
-        groups[6][j] = ImageIO.read(getClass().getResource("textures/Group7"+ Integer.toString(j) + ".png"));
-      }catch(Exception e){e.printStackTrace();}
-    } // end of for
     
     
     for (int i=0; i<=7; i++) {  
@@ -167,13 +159,24 @@ public class MyoKey extends JFrame {
   @Override
   public void paint(Graphics g){
     super.paint(g);
-    if(selectedGroup == 0){
+    if(selectedGroup == -1){
       for (int i = 0; i<=5; i++) {
-        g.drawImage(groups[i][0], ballpos[i][0], ballpos[i][1], new Color(1f,1f,1f,0f), null);
+        g.drawImage(groups[i], ballpos[i][0], ballpos[i][1], new Color(1f,1f,1f,0f), null);
       } // end of for 
     }else{
-      for (int i = 0; i<=5; i++) {
-        g.drawImage(groups[selectedGroup][i], ballpos[i][0], ballpos[i][1], new Color(1f,1f,1f,0f), null);
+      for (int i = 0; i<=4; i++) {
+        g.drawImage(groups[7], ballpos[i+1][0], ballpos[i+1][1], new Color(1f,1f,1f,0f), null);
+        int x = ballpos[i+1][0] + 50;
+        int y = ballpos[i+1][1] + 50;
+        
+        Font f = new Font("Arial", Font.BOLD, 50);       
+        AffineTransform affinetransform = new AffineTransform();     
+        FontRenderContext frc = new FontRenderContext(affinetransform,true,true);  
+        int textwidth = (int)(f.getStringBounds(letters[selectedGroup][i], frc).getWidth());
+        int textheight = (int)(f.getStringBounds(letters[selectedGroup][i], frc).getHeight()- f.getLineMetrics(letters[selectedGroup][i], frc).getAscent()/2);
+        g.setFont(f);
+        g.setColor(new Color(0, 187, 222));
+        g.drawString(letters[selectedGroup][i], x-(int)(textwidth/2), y+(int)(textheight/2));
       } // end of for 
     }
     
@@ -191,7 +194,7 @@ public class MyoKey extends JFrame {
     //System.out.println(comListener.curArm.toString());
     
     if(comListener.xDir == XDirection.X_DIRECTION_TOWARDS_WRIST) height = -height;
-    System.out.println(Double.toString(rot).substring(0,4) + "/" + Double.toString(pan).substring(0,4) + "/" + Double.toString(height).substring(0,4));
+    //System.out.println(Double.toString(rot).substring(0,4) + "/" + Double.toString(pan).substring(0,4) + "/" + Double.toString(height).substring(0,4));
     
     //height -1.4 - 1.4
     //0.7 per field
@@ -218,33 +221,33 @@ public class MyoKey extends JFrame {
     if(!side){
       if(height< -0.25){
         //Field 0
-        System.out.println("Field 0");
+        if(selected != 0)System.out.println("Field 0");
         selected = 0;
       }else if(height<= 0.25 && height> -0.35){
         //Field 1
-        System.out.println("Field 1");
+        if(selected != 1)System.out.println("Field 1");
         selected = 1;
       }else if(height<= 1.05 && height> 0.35){
         //Field 2
-        System.out.println("Field 2");
+        if(selected != 2)System.out.println("Field 2");
         selected = 2;
       }else if(height> 1.05){
         //Field 3
-        System.out.println("Field 3");
+        if(selected != 3)System.out.println("Field 3");
         selected = 3;
       }
     }else{
       if(height> 1.05){  
         //Field 3 
-        System.out.println("Field 3");
+        if(selected != 3)System.out.println("Field 3");
         selected = 3;
       }else if(height<= 1.05 && height> 0.6){
         //Field 4     
-        System.out.println("Field 4");
+        if(selected != 4)System.out.println("Field 4");
         selected = 4;
       }else if(height<= 0.6){  
         //Field 5
-        System.out.println("Field 5 selected");
+        if(selected != 5)System.out.println("Field 5 selected");
         selected = 5;
       }
     }             
