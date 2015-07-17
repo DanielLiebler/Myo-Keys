@@ -26,7 +26,7 @@ public class MyoKey extends JFrame {
   // Anfang Attribute
   public static MyoKey mainFrame;
   private JPopupMenu optionMenu = new JPopupMenu();
-  
+  private static RedockFrame[] redockFrames = new RedockFrame[8];
   
   //start MYO Attributes
   //Using Nicolas A Stuarts Java Library
@@ -103,7 +103,25 @@ public class MyoKey extends JFrame {
       }
     });
     
+    for (int i = 0; i <8; i++) {
+      redockFrames[i] = new RedockFrame(i);
+    } // end of for
+    
+    
     optionMenu.setBackground(new Color(1f,1f,1f,1f));
+    
+    JMenuItem menuItemDock = new JMenuItem("   dock Myo Keys", new ImageIcon("textures/redock.png"));
+    menuItemDock.setBackground(new Color(1.0f,1.0f,1.0f,0f));  
+    menuItemDock.setOpaque(false);
+    menuItemDock.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e){
+        for (int i = 0; i <8; i++) {
+          redockFrames[i].setVisible(true);
+        }
+      }
+    });
+    optionMenu.add(menuItemDock);
+    
     JMenuItem menuItemExit = new JMenuItem("   EXIT Myo Keys", new ImageIcon("textures/exit.png"));
     menuItemExit.setBackground(new Color(1.0f,1.0f,1.0f,0f));  
     menuItemExit.setOpaque(false);
@@ -257,5 +275,22 @@ public class MyoKey extends JFrame {
     lastPos[1] = height;
   }
   
+  public static void reDock(int side){
+    System.out.println("redocking: " + side);
+    for (int i = 0; i <8; i++) {
+      redockFrames[i].setVisible(false);
+    }                                                
+    
+    Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+    int x = 0;
+    int y = 0;
+    if(side ==0 || side ==6 || side ==7) x = 0;
+    if(side ==1 || side ==5) x = d.width/2-256;
+    if(side ==2 || side ==3 || side ==4) x = d.width-512;
+    if(side ==0 || side ==1 || side ==2) y = 0;
+    if(side ==3 || side ==7) y = d.height/2-256;
+    if(side ==4 || side ==5 || side ==6) y = d.height-512;
+    mainFrame.setLocation(x, y);
+  }
   // Ende Methoden
 } // end of class MyoKey
