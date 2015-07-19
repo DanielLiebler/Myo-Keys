@@ -1,6 +1,8 @@
 
 import com.thalmic.myo.*;
-import com.thalmic.myo.enums.*;  
+import com.thalmic.myo.enums.*; 
+import java.awt.Robot;       
+import java.awt.AWTException; 
 
 public class CombinedListener extends AbstractDeviceListener{
   public XDirection xDir;
@@ -34,6 +36,7 @@ public class CombinedListener extends AbstractDeviceListener{
   public void onUnlock(Myo myo, long timestamp) { 
     MyoKey.mainFrame.setVisible(true);            
     System.out.println("Unlock");
+    MyoKey.mainFrame.transferFocus();
   }
   
   @Override
@@ -45,8 +48,20 @@ public class CombinedListener extends AbstractDeviceListener{
   @Override
   public void onPose(Myo myo, long timestamp, Pose pose) {
     System.out.println("Pose" + pose.toString());
-    if(PoseType.FIST == pose.getType()){
-      MyoKey.selectedGroup = MyoKey.selected;
+    if(PoseType.FIST == pose.getType()){      
+      if (MyoKey.selectedGroup == -1) {
+        MyoKey.selectedGroup = MyoKey.selected;
+      }else if(MyoKey.selected >= 1 && MyoKey.selected <=6){
+        try {
+          Robot robot = new Robot();
+          robot.setAutoDelay(250);
+          robot.keyPress(MyoKey.keys[MyoKey.selectedGroup][MyoKey.selected-1]);
+          robot.keyRelease(MyoKey.keys[MyoKey.selectedGroup][MyoKey.selected-1]);
+          MyoKey.selectedGroup = -1;
+        } catch (AWTException ex) {
+          ex.printStackTrace();
+        }
+      }
     }
   }
   

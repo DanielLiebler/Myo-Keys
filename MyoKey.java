@@ -23,6 +23,7 @@ public class MyoKey extends JFrame {
   private BufferedImage[] groups = new BufferedImage[8];        //Groups[7] is empty Group Icon  
   private BufferedImage[] selectors = new BufferedImage[8];
   private String[][] letters = {{"A", "B", "C", "D", "E"}, {"F", "G", "H", "I", "J"}, {"K", "L", "M", "N", "O"}, {"P", "Q", "R", "S", "T"}, {"U", "V", "W", "X", "Y"}, {"Z", ".", ",", "return", "nextGroup"}, {"(", ")", "-", "\"", ":"}};
+  public static int[][] keys = {{KeyEvent.VK_A, KeyEvent.VK_B, KeyEvent.VK_C, KeyEvent.VK_D, KeyEvent.VK_E}, {KeyEvent.VK_F, KeyEvent.VK_G, KeyEvent.VK_H, KeyEvent.VK_I, KeyEvent.VK_J}, {KeyEvent.VK_K, KeyEvent.VK_L, KeyEvent.VK_M, KeyEvent.VK_N, KeyEvent.VK_O}, {KeyEvent.VK_P, KeyEvent.VK_Q, KeyEvent.VK_R, KeyEvent.VK_S, KeyEvent.VK_T}, {KeyEvent.VK_U, KeyEvent.VK_V, KeyEvent.VK_W, KeyEvent.VK_X, KeyEvent.VK_Y}, {KeyEvent.VK_Z, KeyEvent.VK_PERIOD, KeyEvent.VK_COMMA, KeyEvent.VK_ENTER}, {KeyEvent.VK_BRACELEFT, KeyEvent.VK_BRACERIGHT, KeyEvent.VK_MINUS, KeyEvent.VK_QUOTE, KeyEvent.VK_COLON}};
   // Anfang Attribute
   public static MyoKey mainFrame;
   private JPopupMenu optionMenu = new JPopupMenu();
@@ -88,7 +89,12 @@ public class MyoKey extends JFrame {
     }catch(Exception e){
       e.printStackTrace();
     }
-    JLabel background=new JLabel(new ImageIcon(bground));
+    JLabel background=new JLabel(new ImageIcon(bground)){
+      public void paint(Graphics g){
+        super.paint(g);
+        paintBalls(g);
+      }
+    };
     add(background);
     addMouseListener(new MouseAdapter() { 
       public void mouseClicked(MouseEvent evt) { 
@@ -127,6 +133,9 @@ public class MyoKey extends JFrame {
     menuItemExit.setOpaque(false);
     menuItemExit.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e){
+        for (int i = 0; i <8; i++) {
+          redockFrames[i].dispose();
+        }
         mainFrame.dispose();
       }
     });
@@ -174,9 +183,9 @@ public class MyoKey extends JFrame {
     
   } // end of main
   
-  @Override
-  public void paint(Graphics g){
-    super.paint(g);
+  //@Override
+  public void paintBalls(Graphics g){
+    //super.paint(g);
     if(selectedGroup == -1){
       for (int i = 0; i<=5; i++) {
         g.drawImage(groups[i], ballpos[i][0], ballpos[i][1], new Color(1f,1f,1f,0f), null);
@@ -235,7 +244,7 @@ public class MyoKey extends JFrame {
     
     boolean side = pan < midPos[0];//true == right, false == left
     
-    
+    int tempSelection = -1;
     if(!side){
       if(height< -0.25){
         //Field 0
@@ -269,6 +278,8 @@ public class MyoKey extends JFrame {
         selected = 5;
       }
     }             
+    
+    
     mainFrame.repaint();
     //System.out.println("Midpos: " + midPos[0] + "/" + midPos[1]);
     lastPos[0] = pan;
